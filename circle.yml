@@ -6,4 +6,5 @@ test:
     - rake install
   override:
     - forker
+    - forker --config
     - ruby test/fork_test.rb
