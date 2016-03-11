@@ -42,12 +42,14 @@ module Forker
       w = c['skip']
       puts "white list = #{w}" unless w.nil?
 
+      always_fork = c['always_fork']
+
       url = c['url'][0]
       puts "getting content from #{url.white}"
-      c = net_content_for_url url
+      content = net_content_for_url url
 
       puts 'getting links'
-      links_to_check, * = net_find_links c
+      links_to_check, * = net_find_links content
 
       puts 'getting repos'
       repos = github_get_repos links_to_check
@@ -84,7 +86,6 @@ module Forker
         end
 
         puts "repos filtered: #{repos.count}"
-        # puts repos
         repos.each { |list| puts " #{list[0]}" }
       end
 
@@ -104,10 +105,10 @@ module Forker
             next
           end
 
-          r = fork(client, r, true)
-          pp r
+          r = fork(client, r, always_fork, true)
+          pp r unless r.nil?
 
-          sleep 1
+          sleep 0.5
         end
       end
     end

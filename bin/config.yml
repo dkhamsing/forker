@@ -1,6 +1,6 @@
 username: ..
 password: ..
-repo:
+always_fork: false
 url:
   - https://github.com/dkhamsing/open-source-ios-apps
 skip:
