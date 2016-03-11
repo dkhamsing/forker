@@ -88,6 +88,7 @@ module Forker
         repos.each { |list| puts " #{list[0]}" }
       end
 
+      puts "repos: #{repos.count}"
       print 'proceed (y/n)? '
       user_input = STDIN.gets.chomp
 
