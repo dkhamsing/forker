@@ -31,12 +31,10 @@ always_fork: false # false will skip existing fork
                    # true will delete existing fork and fork again
 url:
   - https://github.com/dkhamsing/open-source-ios-apps
+  - https://github.com/vsouza/awesome-ios
 skip:
   - mac-apps
-  - awesome-osx
-  - android-apps
   - awesome-ios
-  - awesome-swift
 ```
 
 ```shell

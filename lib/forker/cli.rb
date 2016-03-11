@@ -44,12 +44,9 @@ module Forker
 
       always_fork = c['always_fork']
 
-      url = c['url'][0]
-      puts "getting content from #{url.white}"
-      content = net_content_for_url url
+      urls = c['url']
 
-      puts 'getting links'
-      links_to_check, * = net_find_links content
+      links_to_check = net_get_links_for_list urls
 
       puts 'getting repos'
       repos = github_get_repos links_to_check

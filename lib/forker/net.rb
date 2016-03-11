@@ -4,6 +4,19 @@ module Forker
   require 'uri'
 
   class << self
+    def net_get_links_for_list(list)
+      links = []
+      list.each do |url|
+        puts "getting content from #{url.white}"
+        content = net_content_for_url url
+
+        puts 'getting links'
+        links_to_check, * = net_find_links content
+        links = links + links_to_check
+      end
+      links
+    end
+
     def net_content_for_url(url)
       Net::HTTP.get(URI.parse(url))
     end
