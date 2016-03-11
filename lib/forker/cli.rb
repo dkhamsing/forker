@@ -1,5 +1,6 @@
 # Command line interface
 module Forker
+  require 'forker/config'
   require 'forker/net'
   require 'forker/version'
   require 'forker/github'
@@ -7,6 +8,7 @@ module Forker
   require 'colored'
   require 'pp'
 
+  OPTION_CONFIG = '--config'
   OPTION_USER = 'u'
   OPTION_PASS = 'p'
   OPTION_WL = 'w'
@@ -17,35 +19,40 @@ module Forker
 
   class << self
     def cli
-      debug = false
+      puts "#{PROJECT} #{VERSION}"
 
-      error,
-      error_message,
-      argv1,
-      w,
-      u,
-      pass = cli_process ARGV
-
-      if error
-        if error_message == ERROR_NO_ARGS
-          cli_usage
-        else
-          puts "#{error_message} 😡"
-        end
+      if ARGV.count == 0
+        cli_usage
         exit
       end
 
-      user_pass = !(u.nil?) && !(pass.nil?)
+      args = ARGV - [OPTION_CONFIG]
+      if (ARGV.include? OPTION_CONFIG) && args.count == 1
+        config_file = args[0]
+        puts "loading config: #{config_file.white} ..."
 
-      unless github_creds || user_pass
-        puts 'Missing GitHub credentials in .netrc'
-        exit 1
+        unless File.exist? config_file
+          config_missing
+          exit
+        end
+
+        c = config config_file
+      else
+        config_missing
+        exit
       end
 
+      debug = false
+
+      u = c['username']
+      pass = c['password']
+
+      w = c['skip']
       puts "white list = #{w}" unless w.nil?
 
-      puts 'getting content '
-      c = net_content_for_url argv1
+      url = c['url'][0]
+      puts "getting content from #{url.white}"
+      c = net_content_for_url url
 
       puts 'getting links'
       links_to_check, * = net_find_links c
@@ -59,7 +66,7 @@ module Forker
       if w.nil?
         repos = repos.map { |r| [r, false] }
       else
-        wl = w.split '^'
+        wl = w
         puts "filtering white list #{wl}"
 
         m = repos.map do |r|
@@ -72,7 +79,7 @@ module Forker
           matches.each do |n|
             reject = true if n
           end
-          # reject =
+
           [r, reject]
         end
 
@@ -92,7 +99,7 @@ module Forker
 
       user_input = cli_prompt
 
-      client = user_pass ? github_client_user_pass(u, pass) : github_client
+      client = github_client_user_pass u, pass
 
       if user_input == 'y'
         repos.each_with_index do |list, index|
@@ -130,13 +137,8 @@ module Forker
     end
 
     def cli_usage
-      p = PROJECT.white
-      m = "#{p}, #{PROJECT_SUMMARY} \n"\
-          "  Usage: #{p} <#{'url'.blue}> [#{OPTION_WL.white}=item1^item2..] "\
-          "[#{OPTION_USER.white}=user] "\
-          "[#{OPTION_PASS.white}=password] \n"\
-          "\t\t       #{OPTION_WL.white}: ^ separated items to skip"
-      puts m
+      puts "usage: #{PROJECT.white} #{OPTION_CONFIG} <config file>"
+      puts PROJECT_URL.underline
     end
 
     def cli_option_value(text, name, separator)
@@ -145,53 +147,15 @@ module Forker
       temp ? temp.split(separator)[1] : nil
     end
 
-    def cli_process(argv)
-      argv1, * = argv
-
-      no_args = argv1.nil?
-      # puts "no args: #{no_args}"
-
-      not_url = !(argv1.include? 'http') if no_args == false
-      # puts "not url: #{not_url}"
-
-      error = no_args || not_url
-      # puts "error: #{error}"
-      if error
-        if no_args
-          e = ERROR_NO_ARGS
-        elsif not_url
-          e = 'not a url'
-        end
-
-        # puts "e: #{e}"
-      end
-
-      # puts "argv: #{argv}"
-      # puts 'getting option white list'
-      # if argv.include? OPTION_WL
-      whitelist = cli_option_value argv, OPTION_WL, SEPARATOR
-      # puts whitelist
-
-      user = cli_option_value argv, OPTION_USER, SEPARATOR
-      # puts user
-
-      password = cli_option_value argv, OPTION_PASS, SEPARATOR
-      # puts password
-
-      [
-        error,
-        e,
-        argv1,
-        whitelist,
-        user,
-        password
-      ]
-    end
-
     def cli_prompt
-      m = 'Proceed (y/n)? '
+      m = 'proceed (y/n)? '
       print m
       STDIN.gets.chomp
+    end
+
+    def config_missing
+      puts 'error: missing config file'.red
+      cli_usage
     end
   end # class
 end

@@ -4,6 +4,8 @@ Fork GitHub repos on a page
 
 ![](http://i.giphy.com/n1JN4fSrXovJe.gif)
 
+[![CircleCI](https://img.shields.io/circleci/project/dkhamsing/forker.svg)]()
+
 ## Installation
 
 ```shell
@@ -15,31 +17,37 @@ $ rake install
 ## Usage
 
 ```
-forker <url> [w=item1^item2..] [u=user] [p=password]
-  url   web page
-  w     items to skip
-  u     github user name
-  p     github password
+forker --config <config file>
 ```
 
 ## Example
 
+YAML [config file](bin/config.yml):
+
+```yml
+username: ..
+password: ..
+url:
+  - https://github.com/dkhamsing/open-source-ios-apps
+skip:
+  - mac-apps
+  - awesome-osx
+  - android-apps
+  - awesome-ios
+  - awesome-swift
+```
+
 ```shell
-$ forker https://raw.githubusercontent.com/dkhamsing/open-source-ios-apps/master/README.md w=vsouz^matteo^open-sou^mac-apps^awesome-osx u=dkhamsing p=r0x0r88:-)
-getting content
+$ forker --config config.yml
+loading config: config.yml ...
+getting content from https://github.com/dkhamsing/open-source-ios-apps
 getting links
 getting repos
-repos found: 241
-filtering white list ["vsouz", "matteo", "open-sou", "mac-apps"]
- white listed jeffreyjackson/mac-apps
- white listed pcqpcq/open-source-android-apps
- white listed vsouza/awesome-ios
- white listed matteocrippa/awesome-swift
-repos filtered: 237
+#...
  artsy/Emergence
  azzoor/WWDCTV
 #...
-Proceed (y/n)? y
+proceed (y/n)? y
 #...
 211/237 forking soffes/words
 {:id=>46074803,

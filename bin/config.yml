@@ -1,0 +1,11 @@
+username: ..
+password: ..
+repo:
+url:
+  - https://github.com/dkhamsing/open-source-ios-apps
+skip:
+  - mac-apps
+  - awesome-osx
+  - android-apps
+  - awesome-ios
+  - awesome-swift

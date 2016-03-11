@@ -1,0 +1,8 @@
+machine:
+  ruby:
+    version: 2.2.0
+test:
+  pre:
+    - rake install
+  override:
+    - forker

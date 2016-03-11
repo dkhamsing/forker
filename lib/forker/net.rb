@@ -2,7 +2,6 @@
 module Forker
   require 'faraday'
   require 'uri'
-  # require 'faraday_middleware'
 
   class << self
     def net_content_for_url(url)

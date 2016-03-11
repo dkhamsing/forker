@@ -23,9 +23,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'colored', '~> 1.2'   # color output
   spec.add_dependency 'faraday', '~> 0.9.2' # grab url content
   spec.add_dependency 'octokit', '~> 4.1.1' # github
-  spec.add_dependency 'netrc', '~> 0.11.0'  # credentials
-
-  # spec.add_development_dependency 'bundler', '~> 1.7' # travis needs this at 1.7
-  # spec.add_development_dependency 'rake', '~> 10.4.2'
-  # spec.add_development_dependency 'guard-rubocop', '~> 1.2.0'
 end
