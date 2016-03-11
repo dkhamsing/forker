@@ -21,6 +21,5 @@ Gem::Specification.new do |spec|
 
   # dependencies
   spec.add_dependency 'colored', '~> 1.2'   # color output
-  spec.add_dependency 'faraday', '~> 0.9.2' # grab url content
-  spec.add_dependency 'octokit', '~> 4.1.1' # github
+  spec.add_dependency 'octokit', '~> 4.3.0' # github
 end

@@ -1,11 +1,11 @@
 # Networking
 module Forker
-  require 'faraday'
+  require 'net/http'
   require 'uri'
 
   class << self
     def net_content_for_url(url)
-      Faraday.get(url).body
+      Net::HTTP.get(URI.parse(url))
     end
 
     def net_find_links(content)
