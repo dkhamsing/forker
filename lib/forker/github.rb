@@ -22,6 +22,10 @@ module Forker
       .reject { |x| x.include? '.' or x.include? '#' }.uniq
     end
 
+    def github_repo_delete(client, repo)
+      client.delete_repo(repo)
+    end
+
     def github_repo_exist(client, repo)
       client.repository?(repo)
     end

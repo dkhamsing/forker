@@ -34,6 +34,10 @@ pass = ENV['PASSWORD']
 puts 'creating client'
 client = Forker::github_client_user_pass user, pass
 
+repo_to_fork = 'mozilla/firefox-ios'
+Forker::fork client, repo_to_fork
+puts 'fork success ✅'
+
 repo = 'firefox-ios'
 fork = "#{Forker::github_user client}/#{repo}"
 puts 'checking fork'

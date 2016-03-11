@@ -1,6 +1,7 @@
 # Command line interface
 module Forker
   require 'forker/config'
+  require 'forker/fork'
   require 'forker/net'
   require 'forker/version'
   require 'forker/github'
@@ -9,13 +10,6 @@ module Forker
   require 'pp'
 
   OPTION_CONFIG = '--config'
-  OPTION_USER = 'u'
-  OPTION_PASS = 'p'
-  OPTION_WL = 'w'
-
-  ERROR_NO_ARGS = 'no args'
-
-  SEPARATOR = '='
 
   class << self
     def cli
@@ -42,8 +36,6 @@ module Forker
         exit
       end
 
-      debug = false
-
       u = c['username']
       pass = c['password']
 
@@ -56,12 +48,11 @@ module Forker
 
       puts 'getting links'
       links_to_check, * = net_find_links c
-      puts "found links #{links_to_check}" if debug
 
       puts 'getting repos'
       repos = github_get_repos links_to_check
       puts "repos found: #{repos.count}"
-      puts repos unless debug
+      puts repos
 
       if w.nil?
         repos = repos.map { |r| [r, false] }
@@ -97,7 +88,8 @@ module Forker
         repos.each { |list| puts " #{list[0]}" }
       end
 
-      user_input = cli_prompt
+      print 'proceed (y/n)? '
+      user_input = STDIN.gets.chomp
 
       client = github_client_user_pass u, pass
 
@@ -105,32 +97,15 @@ module Forker
         repos.each_with_index do |list, index|
           r = list[0]
           puts "#{index + 1}/#{repos.count} forking #{r.white}"
-          # TODO: check if repo is a repo
 
-          # begin
-          #   gr = github_repo(client, r)
-          # rescue StandardError => e
-          #   puts " error #{e}".red
-          #   next
-          # end
           unless github_repo_exist(client, r)
             puts " error #{r.red} is not a repo"
             next
           end
 
-          # check if fork already exist
-          fork = "#{github_user client}/#{r.split('/')[1]}"
-          puts fork
+          r = fork(client, r, true)
+          pp r
 
-          if github_repo_exist(client, fork)
-            puts "  fork #{fork.white} already exists"
-            next
-          end
-
-          next if debug
-
-          f = github_fork(client, r)
-          pp f
           sleep 1
         end
       end
@@ -139,18 +114,6 @@ module Forker
     def cli_usage
       puts "usage: #{PROJECT.white} #{OPTION_CONFIG} <config file>"
       puts PROJECT_URL.underline
-    end
-
-    def cli_option_value(text, name, separator)
-      regex = "#{name}#{separator}"
-      temp = text.find { |e| /#{regex}/ =~ e }
-      temp ? temp.split(separator)[1] : nil
-    end
-
-    def cli_prompt
-      m = 'proceed (y/n)? '
-      print m
-      STDIN.gets.chomp
     end
 
     def config_missing
