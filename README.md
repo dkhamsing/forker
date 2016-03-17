@@ -1,6 +1,6 @@
 # forker
 
-Fork GitHub repos on a page
+Fork GitHub repos found on a page
 
 ![](http://i.giphy.com/n1JN4fSrXovJe.gif)
 
