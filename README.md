@@ -14,6 +14,10 @@ $ cd forker/
 $ rake install
 ```
 
+### Alternative
+
+Install gem dependencies manually from the terminal (octokit, faraday, etc).
+
 ## Usage
 
 ```
